@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: openjdk8
+  build:
+    commands:
+      - cd backend
+      - mvn clean package -DpackageBucket=${PACKAGE_BUCKET}
+artifacts:
+  files:
+    - backend/target/sam/app/packaged-template.yaml
+  discard-paths: yes

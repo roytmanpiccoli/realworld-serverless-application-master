@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: openjdk8
+      nodejs: 8
+    commands:
+      - npm install -g @vue/cli
+  build:
+    commands:
+      - cd static-website
+      - npm install
+      - npm run ci
+      - cd ..
+      - mvn clean package -DpackageBucket=${PACKAGE_BUCKET}

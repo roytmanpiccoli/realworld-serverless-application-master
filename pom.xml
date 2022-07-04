@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>software.amazon.serverless</groupId>
+  <artifactId>realworld-serverless-application</artifactId>
+  <version>1.0.1</version>
+  <packaging>pom</packaging>
+
+  <name>realworld-serverless-application</name>
+  <url>https://github.com/awslabs/realworld-serverless-application</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <packageBucket>my-bucket</packageBucket>
+  </properties>
+  <modules>
+    <module>backend</module>
+  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Create package folder</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <mkdir dir="${project.build.directory}/sam/app"/>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <executions>
+          <execution>
+            <id>Package project</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>aws</executable>
+              <arguments>
+                <argument>cloudformation</argument>
+                <argument>package</argument>
+                <argument>--s3-bucket</argument>
+                <argument>${packageBucket}</argument>
+                <argument>--template-file</argument>
+                <argument>${project.basedir}/sam/app/template.yaml</argument>
+                <argument>--output-template-file</argument>
+                <argument>${project.build.directory}/sam/app/packaged-template.yaml</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
